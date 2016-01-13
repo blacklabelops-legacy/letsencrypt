@@ -1,0 +1,15 @@
+machine:
+  services:
+    - docker
+
+dependencies:
+  override:
+    - docker version
+    - docker info
+    - docker build -t="blacklabelops/letsencrypt" .
+
+test:
+  override:
+    - docker run -d --name="letsencrypt" blacklabelops/letsencrypt
+    - docker logs letsencrypt
+    - docker stop letsencrypt
