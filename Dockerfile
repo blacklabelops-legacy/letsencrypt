@@ -1,4 +1,4 @@
-FROM centos:6.7
+FROM blacklabelops/centos
 MAINTAINER Steffen Bleul <sbl@blacklabelops.com>
 
 # Property permissions
@@ -37,7 +37,11 @@ RUN mkdir -p $JOBBER_HOME && \
     make -C src/github.com/dshearer/jobber install-bin DESTDIR=$JOBBER_HOME && \
     cd $LETSENCRYPT_HOME && \
     git clone https://github.com/letsencrypt/letsencrypt && \
-    /opt/letsencrypt/letsencrypt/letsencrypt-auto
+    /opt/letsencrypt/letsencrypt/letsencrypt-auto --help
+
+WORKDIR /opt/letsencrypt/letsencrypt
+VOLUME ["/etc/letsencrypt"]
+EXPOSE 443 80
 
 USER $CONTAINER_USER
 COPY imagescripts/docker-entrypoint.sh /opt/jobber/docker-entrypoint.sh
