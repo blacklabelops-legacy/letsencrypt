@@ -33,6 +33,12 @@ if [ -n "${HTTPS_ENABLED}" ]; then
   letsencrypt_https_enabled=${HTTPS_ENABLED}
 fi
 
+letsencrypt_account_id=""
+
+if [ -n "${LETSENCRYPT_ACCOUNT_ID}" ]; then
+  letsencrypt_account_id="--account "${LETSENCRYPT_ACCOUNT_ID}
+fi
+
 protocoll_command=""
 
 if  [ "${letsencrypt_http_enabled}" = "false" ]; then
@@ -43,33 +49,40 @@ if  [ "${letsencrypt_https_enabled}" = "false" ]; then
   protocoll_command="--standalone-supported-challenges http-01"
 fi
 
+letsencrypt_debug=""
+
+if  [ "${LETSENCRYPT_DEBUG}" = "true" ]; then
+  protocoll_command="--debug"
+fi
+
 if [ ! -f "${configfile}" ]; then
   touch ${configfile}
-  cat > ${configfile} <<_EOF_
+fi
+
+cat > ${configfile} <<_EOF_
 ---
 _EOF_
 
-  job_on_error="Continue"
+job_on_error="Continue"
 
-  if [ -n "${JOB_ON_ERROR}" ]; then
-    job_on_error=${JOB_ON_ERROR}
-  fi
+if [ -n "${JOB_ON_ERROR}" ]; then
+  job_on_error=${JOB_ON_ERROR}
+fi
 
-  job_time="0 0 1 15 * *"
+job_time="0 0 1 15 * *"
 
-  if [ -n "${JOB_TIME}" ]; then
-    job_time=${JOB_TIME}
-  fi
+if [ -n "${JOB_TIME}" ]; then
+  job_time=${JOB_TIME}
+fi
 
-  cat >> ${configfile} <<_EOF_
+cat >> ${configfile} <<_EOF_
 - name: letsencryt_renewal
-  cmd: bash -c "/opt/letsencrypt/letsencrypt/letsencrypt-auto certonly --renew-by-default --standalone ${letsencrypt_domains} ${protocoll_command}"
+  cmd: bash -c "/opt/letsencrypt/letsencrypt/letsencrypt-auto certonly --renew-by-default ${letsencrypt_account_id} ${letsencrypt_debug} --standalone ${letsencrypt_domains} ${protocoll_command}"
   time: ${job_time}
   onError: ${job_on_error}
   notifyOnError: false
   notifyOnFailure: false
 _EOF_
-fi
 
 cat ${configfile}
 
@@ -78,7 +91,11 @@ if [ "$1" = 'jobberd' ]; then
 fi
 
 if [ "$1" = 'certonly' ]; then
-  bash -c "/opt/letsencrypt/letsencrypt/letsencrypt-auto certonly --standalone ${protocoll_command} --email ${letsencrypt_email} --agree-tos ${letsencrypt_domains}"
+  bash -c "/opt/letsencrypt/letsencrypt/letsencrypt-auto certonly --standalone ${protocoll_command} ${letsencrypt_debug} --email ${letsencrypt_email} --agree-tos ${letsencrypt_domains}"
+fi
+
+if [ "$1" = 'renewal' ]; then
+  bash -c "/opt/letsencrypt/letsencrypt/letsencrypt-auto certonly --renew-by-default ${letsencrypt_account_id} ${letsencrypt_debug} --standalone ${letsencrypt_domains} ${protocoll_command}"
 fi
 
 exec "$@"
