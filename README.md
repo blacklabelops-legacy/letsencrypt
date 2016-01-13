@@ -14,7 +14,7 @@ the container must be reachable under the respective domain name.
 
 # Make It Short!
 
-In short, you can create and renew letsencrypt ssl certificates!
+In short, you can create and renew let's encrypt ssl certificates!
 
 First start a data container where the certificate will be stored.
 
@@ -58,7 +58,7 @@ $ docker run --rm \
 
 > Will renew the specified certificates on 15. of each month.
 
-# Let's encrypt domains
+# Let's Encrypt Domains
 
 You can specify multiple domain which will be handled by the image. Each domain must be followed by a numer:
 
@@ -84,7 +84,7 @@ $ docker run -d \
 
 > Will generate the certificates inside its volume /etc/letsencrypt
 
-# HTTP and HTTPS
+# Choosing between HTTP and HTTPS
 
 Let's encrypt uses either HTTP port 80 or HTTPS port 443 for autenticating the domains.
 
