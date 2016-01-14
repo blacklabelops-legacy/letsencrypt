@@ -90,8 +90,12 @@ if [ "$1" = 'jobberd' ]; then
   sudo /opt/jobber/sbin/jobberd
 fi
 
-if [ "$1" = 'certonly' ]; then
+if [ "$1" = 'install' ]; then
   bash -c "/opt/letsencrypt/letsencrypt/letsencrypt-auto certonly --standalone ${protocoll_command} ${letsencrypt_debug} --email ${letsencrypt_email} --agree-tos ${letsencrypt_domains}"
+fi
+
+if [ "$1" = 'newcert' ]; then
+  bash -c "/opt/letsencrypt/letsencrypt/letsencrypt-auto certonly --standalone ${protocoll_command} ${letsencrypt_debug} ${letsencrypt_account_id} ${letsencrypt_domains}"
 fi
 
 if [ "$1" = 'renewal' ]; then
