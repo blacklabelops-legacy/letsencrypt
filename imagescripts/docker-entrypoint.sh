@@ -52,7 +52,7 @@ fi
 letsencrypt_debug=""
 
 if  [ "${LETSENCRYPT_DEBUG}" = "true" ]; then
-  protocoll_command="--debug"
+  letsencrypt_debug="--debug"
 fi
 
 if [ ! -f "${configfile}" ]; then
