@@ -92,14 +92,17 @@ fi
 
 if [ "$1" = 'install' ]; then
   bash -c "/opt/letsencrypt/letsencrypt/letsencrypt-auto certonly --standalone ${protocoll_command} ${letsencrypt_debug} --email ${letsencrypt_email} --agree-tos ${letsencrypt_domains}"
+  exit
 fi
 
 if [ "$1" = 'newcert' ]; then
   bash -c "/opt/letsencrypt/letsencrypt/letsencrypt-auto certonly --standalone ${protocoll_command} ${letsencrypt_debug} ${letsencrypt_account_id} ${letsencrypt_domains}"
+  exit
 fi
 
 if [ "$1" = 'renewal' ]; then
-  bash -c "/opt/letsencrypt/letsencrypt/letsencrypt-auto certonly --renew-by-default ${letsencrypt_account_id} ${letsencrypt_debug} --standalone ${letsencrypt_domains} ${protocoll_command}"
+  bash -c "/opt/letsencrypt/letsencrypt/letsencrypt-auto certonly --standalone ${protocoll_command} ${letsencrypt_debug} --renew-by-default ${letsencrypt_account_id} ${letsencrypt_domains}"
+  exit
 fi
 
 if [ -n "${CERTIFICATE_OWNER}" ] || [ -n "${CERTIFICATE_GROUP}" ]; then
