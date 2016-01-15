@@ -105,6 +105,12 @@ if [ "$1" = 'renewal' ]; then
   exit
 fi
 
+if [ "$1" = 'manualrenewal' ]; then
+  bash -c "/opt/letsencrypt/letsencrypt/letsencrypt-auto certonly --standalone ${protocoll_command} ${letsencrypt_debug} ${letsencrypt_account_id} ${letsencrypt_domains}"
+  exit
+fi
+
+
 if [ -n "${CERTIFICATE_OWNER}" ] || [ -n "${CERTIFICATE_GROUP}" ]; then
   bash -c "sudo chown ${CERTIFICATE_OWNER}:${CERTIFICATE_GROUP} /etc/letsencrypt"
 fi
