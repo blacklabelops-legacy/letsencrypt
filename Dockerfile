@@ -27,6 +27,7 @@ ENV JOBBER_HOME=/opt/jobber
 ENV JOBBER_LIB=$JOBBER_HOME/lib
 ENV GOPATH=$JOBBER_LIB
 ENV LETSENCRYPT_HOME=/opt/letsencrypt
+ENV LETSENCRYPT_VERSION=latest
 
 RUN mkdir -p $JOBBER_HOME && \
     mkdir -p $JOBBER_LIB && \
@@ -36,7 +37,10 @@ RUN mkdir -p $JOBBER_HOME && \
     go get github.com/dshearer/jobber && \
     make -C src/github.com/dshearer/jobber install-bin DESTDIR=$JOBBER_HOME && \
     cd $LETSENCRYPT_HOME && \
-    git clone https://github.com/letsencrypt/letsencrypt && \
+    if  [ "${LETSENCRYPT_VERSION}" = "latest" ]; \
+      then git clone https://github.com/letsencrypt/letsencrypt ; \
+      else git clone -b ${LETSENCRYPT_VERSION} https://github.com/letsencrypt/letsencrypt ; \
+    fi && \
     /opt/letsencrypt/letsencrypt/letsencrypt-auto --help
 
 WORKDIR /opt/letsencrypt/letsencrypt
