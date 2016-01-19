@@ -101,7 +101,7 @@ Example using HTTP only:
 $ docker run -d \
     -p 80:80 \
     --name letsencrypt \
-    -e "HTTPS_ENABLED=false" \
+    -e "LETSENCRYPT_HTTPS_ENABLED=false" \
     -e "LETSENCRYPT_EMAIL=dummy@example.com" \
     -e "LETSENCRYPT_DOMAIN1=subdomain1.example.com" \
     blacklabelops/letsencrypt
@@ -115,7 +115,7 @@ Example using HTTPS only:
 $ docker run -d \
     -p 443:443 \
     --name letsencrypt \
-    -e "HTTP_ENABLED=false" \
+    -e "LETSENCRYPT_HTTP_ENABLED=false" \
     -e "LETSENCRYPT_EMAIL=dummy@example.com" \
     -e "LETSENCRYPT_DOMAIN1=subdomain1.example.com" \
     blacklabelops/letsencrypt
@@ -137,7 +137,7 @@ Example:
 $ docker run -d \
     -p 80:80 \
     --name letsencrypt \
-    -e "HTTPS_ENABLED=false" \
+    -e "LETSENCRYPT_HTTPS_ENABLED=false" \
     -e "LETSENCRYPT_ACCOUNT_ID=YOUR_ACCOUNT_ID_HERE" \
     -e "LETSENCRYPT_EMAIL=dummy@example.com" \
     -e "LETSENCRYPT_DOMAIN1=subdomain1.example.com" \

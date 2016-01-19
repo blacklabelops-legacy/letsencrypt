@@ -31,12 +31,12 @@ done
 letsencrypt_http_enabled="true"
 letsencrypt_https_enabled="true"
 
-if [ -n "${HTTP_ENABLED}" ]; then
-  letsencrypt_http_enabled=${HTTP_ENABLED}
+if [ -n "${LETSENCRYP_HTTP_ENABLED}" ]; then
+  letsencrypt_http_enabled=${LETSENCRYP_HTTP_ENABLED}
 fi
 
-if [ -n "${HTTPS_ENABLED}" ]; then
-  letsencrypt_https_enabled=${HTTPS_ENABLED}
+if [ -n "${LETSENCRYPT_HTTPS_ENABLED}" ]; then
+  letsencrypt_https_enabled=${LETSENCRYPT_HTTPS_ENABLED}
 fi
 
 letsencrypt_account_id=""
@@ -77,8 +77,8 @@ fi
 
 job_time="0 0 1 15 * *"
 
-if [ -n "${JOB_TIME}" ]; then
-  job_time=${JOB_TIME}
+if [ -n "${LETSENCRYPT_JOB_TIME}" ]; then
+  job_time=${LETSENCRYPT_JOB_TIME}
 fi
 
 cat >> ${configfile} <<_EOF_
@@ -117,8 +117,8 @@ if [ "$1" = 'manualrenewal' ]; then
 fi
 
 
-if [ -n "${CERTIFICATE_OWNER}" ] || [ -n "${CERTIFICATE_GROUP}" ]; then
-  bash -c "sudo chown ${CERTIFICATE_OWNER}:${CERTIFICATE_GROUP} /etc/letsencrypt"
+if [ -n "${LETSENCRYP_CERTIFICATE_OWNER}" ] || [ -n "${LETSENCRYPT_CERTIFICATE_GROUP}" ]; then
+  bash -c "sudo chown ${LETSENCRYP_CERTIFICATE_OWNER}:${LETSENCRYPT_CERTIFICATE_GROUP} /etc/letsencrypt"
 fi
 
 exec "$@"
