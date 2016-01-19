@@ -3,6 +3,12 @@ set -o errexit
 
 configfile="/home/letsencrypt/.jobber"
 
+letsencrypt_testcert=""
+
+if [ "${LETSENCRYPT_TESTCERT}" = "true" ]; then
+  letsencrypt_testcert="--test-cert"
+fi
+
 letsencrypt_email=""
 
 if [ -n "${LETSENCRYPT_EMAIL}" ]; then
@@ -91,22 +97,22 @@ if [ "$1" = 'jobberd' ]; then
 fi
 
 if [ "$1" = 'install' ]; then
-  bash -c "/opt/letsencrypt/letsencrypt/letsencrypt-auto certonly --standalone ${protocoll_command} ${letsencrypt_debug} --email ${letsencrypt_email} --agree-tos ${letsencrypt_domains}"
+  bash -c "/opt/letsencrypt/letsencrypt/letsencrypt-auto certonly --standalone ${protocoll_command} ${letsencrypt_testcert} ${letsencrypt_debug} --email ${letsencrypt_email} --agree-tos ${letsencrypt_domains}"
   exit
 fi
 
 if [ "$1" = 'newcert' ]; then
-  bash -c "/opt/letsencrypt/letsencrypt/letsencrypt-auto certonly --standalone ${protocoll_command} ${letsencrypt_debug} ${letsencrypt_account_id} ${letsencrypt_domains}"
+  bash -c "/opt/letsencrypt/letsencrypt/letsencrypt-auto certonly --standalone ${protocoll_command} ${letsencrypt_testcert} ${letsencrypt_debug} ${letsencrypt_account_id} ${letsencrypt_domains}"
   exit
 fi
 
 if [ "$1" = 'renewal' ]; then
-  bash -c "/opt/letsencrypt/letsencrypt/letsencrypt-auto certonly --standalone ${protocoll_command} ${letsencrypt_debug} --renew-by-default ${letsencrypt_account_id} ${letsencrypt_domains}"
+  bash -c "/opt/letsencrypt/letsencrypt/letsencrypt-auto certonly --standalone ${protocoll_command} ${letsencrypt_testcert} ${letsencrypt_debug} --renew-by-default ${letsencrypt_account_id} ${letsencrypt_domains}"
   exit
 fi
 
 if [ "$1" = 'manualrenewal' ]; then
-  bash -c "/opt/letsencrypt/letsencrypt/letsencrypt-auto certonly --standalone ${protocoll_command} ${letsencrypt_debug} ${letsencrypt_account_id} ${letsencrypt_domains}"
+  bash -c "/opt/letsencrypt/letsencrypt/letsencrypt-auto certonly --standalone ${protocoll_command} ${letsencrypt_testcert} ${letsencrypt_debug} ${letsencrypt_account_id} ${letsencrypt_domains}"
   exit
 fi
 
