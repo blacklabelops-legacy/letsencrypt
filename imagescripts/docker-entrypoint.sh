@@ -83,7 +83,7 @@ fi
 
 cat >> ${configfile} <<_EOF_
 - name: letsencryt_renewal
-  cmd: bash -c "/opt/letsencrypt/letsencrypt/letsencrypt-auto certonly --renew-by-default ${letsencrypt_account_id} ${letsencrypt_debug} --standalone ${letsencrypt_domains} ${protocoll_command}"
+  cmd: bash -c "/opt/letsencrypt/letsencrypt/letsencrypt-auto certonly --standalone ${protocoll_command} ${letsencrypt_testcert} ${letsencrypt_debug} --renew-by-default ${letsencrypt_account_id} ${letsencrypt_domains}"
   time: ${job_time}
   onError: ${job_on_error}
   notifyOnError: false
