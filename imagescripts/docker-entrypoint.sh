@@ -71,8 +71,8 @@ _EOF_
 
 job_on_error="Continue"
 
-if [ -n "${JOB_ON_ERROR}" ]; then
-  job_on_error=${JOB_ON_ERROR}
+if [ -n "${LETSENCRYPT_JOB_ON_ERROR}" ]; then
+  job_on_error=${LETSENCRYPT_JOB_ON_ERROR}
 fi
 
 job_time="0 0 1 15 * *"
