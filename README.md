@@ -2,7 +2,18 @@
 
 Docker Image wrapping Let's Encrypt Standalone Server.
 
+Perfectly working with this reverse proxy: [blacklabelops/nginx](https://github.com/blacklabelops/nginx)
+
 Work-In-Progress!
+
+This is still Work-In-Progress because:
+
+* I am still testing the whole thing on my servers!
+* The letsencrypt client is not very user friendly. I am still working on examples and documentation.
+* Letsencrypt is under heavy development and big changes may occur in short time.
+* Even when used correctly then the Letsencrypt client can result in errors. The automatic renewal is therefore not reliable.
+
+Questions & Answers on Hipchat: [blacklabelops/hipchat](https://www.hipchat.com/geogBFvEM) (Please only Image-Related! I am no Let's Encrypt Expert)
 
 Features:
 
@@ -11,14 +22,30 @@ Features:
 * Manual creation of new certificates.
 * Manual renewal of certificates.
 
-# Note
+# Requirements
 
-Does not work in development environment. Let's Encrypt does a bidirectional handshake with Letsencrypt.org, this means that
-the container must be reachable under the respective domain name (e.g. mysubdomain.example.com).
+Will not work inside your local environment. In order to generate valid certificates you will have to run this container on your internet host. Let's Encrypt does a bidirectional handshake with Letsencrypt.org, this means that the container must be reachable under the respective domain name (e.g. mysubdomain.example.com).
 
 # Make It Short!
 
 In short, you can create and renew let's encrypt ssl certificates!
+
+~~~~
+$ docker run --rm \
+    -p 80:80 \
+    -p 443:443 \
+    --name letsencrypt \
+    -v $(pwd):/etc/letsencrypt \
+    -e "LETSENCRYPT_EMAIL=dummy@example.com" \
+    -e "LETSENCRYPT_DOMAIN1=www.example.com" \
+    blacklabelops/letsencrypt install
+~~~~
+
+> Will generate dummy certificates inside your local folder! If you want to add new certificates then use 'renew' instead of 'install'. Note: This example works in debug mode!
+
+# How It Works
+
+You can create and renew let's encrypt ssl certificates!
 
 First start a data container where the certificate will be stored.
 
@@ -42,7 +69,7 @@ $ docker run --rm \
     --name letsencrypt \
     --volumes-from letsencrypt_data \
     -e "LETSENCRYPT_EMAIL=dummy@example.com" \
-    -e "LETSENCRYPT_DOMAIN1=subdomain.example.com" \
+    -e "LETSENCRYPT_DOMAIN1=www.example.com" \
     blacklabelops/letsencrypt install
 ~~~~
 
@@ -56,7 +83,7 @@ $ docker run --rm \
     -p 443:443 \
     --name letsencrypt \
     --volumes-from letsencrypt_data \
-    -e "LETSENCRYPT_DOMAIN1=jenkins.blacklabelops.com" \
+    -e "LETSENCRYPT_DOMAIN1=www.example.com" \
     blacklabelops/letsencrypt
 ~~~~
 
@@ -65,6 +92,9 @@ $ docker run --rm \
 # Let's Encrypt Domains
 
 You can specify multiple domain which will be handled by the image. Each domain must be followed by a number:
+
+Note: Multiple domains will result in one certificate with the specified domains! Letsencrypt currently takes the
+certificate specified with LETSENCRYPT_DOMAIN1 as the certificate name for all subcertificates!
 
 Example:
 
@@ -86,7 +116,7 @@ $ docker run -d \
     blacklabelops/letsencrypt
 ~~~~
 
-> Will renew the certificates inside its volume /etc/letsencrypt
+> Will renew the certificate inside its volume /etc/letsencrypt/live/subdomain1.example.com
 
 # Choosing between HTTP and HTTPS
 
@@ -145,6 +175,131 @@ $ docker run -d \
 ~~~~
 
 > Will renew the certificates inside its volume /etc/letsencrypt for the specific account.
+
+# Using Let's Encrypt Manually
+
+You can invoke all functionality manually. Supported commands are:
+
+* install: Automatic initial install. If you use this multiple times then letsencrypt will create multiple accounts.
+* manualinstall: Manual initial install. If you use this multiple times then letsencrypt will create multiple accounts.
+* newcert: Simply generate a new certificate. (Is actually the same as manualrenewal)
+* manualrenewal: Manually renewal a certificate. (Is actually the same as newcert)
+* renewal: Automatically renew certificate.
+
+Example `install`:
+
+~~~~
+$ docker run \
+    -p 80:80 \
+    -p 443:443 \
+    --name letsencrypt \
+    -e "LETSENCRYPT_EMAIL=dummy@example.com" \
+    -e "LETSENCRYPT_DOMAIN1=subdomain1.example.com" \
+    blacklabelops/letsencrypt install
+~~~~
+
+Example `manualinstall`:
+
+~~~~
+$ docker run -it \
+    -p 80:80 \
+    -p 443:443 \
+    --name letsencrypt \
+    -e "LETSENCRYPT_EMAIL=dummy@example.com" \
+    -e "LETSENCRYPT_DOMAIN1=subdomain1.example.com" \
+    blacklabelops/letsencrypt manualinstall
+~~~~
+
+Example `newcert`:
+
+~~~~
+$ docker run -it \
+    -p 80:80 \
+    -p 443:443 \
+    --name letsencrypt \
+    -e "LETSENCRYPT_DOMAIN1=subdomain1.example.com" \
+    blacklabelops/letsencrypt newcert
+~~~~
+
+Example `manualrenewal`:
+
+~~~~
+$ docker run -it \
+    -p 80:80 \
+    -p 443:443 \
+    --name letsencrypt \
+    -e "LETSENCRYPT_DOMAIN1=subdomain1.example.com" \
+    blacklabelops/letsencrypt manualrenewal
+~~~~
+
+Example `renewal`:
+
+~~~~
+$ docker run \
+    -p 80:80 \
+    -p 443:443 \
+    --name letsencrypt \
+    -e "LETSENCRYPT_DOMAIN1=subdomain1.example.com" \
+    blacklabelops/letsencrypt renewal
+~~~~
+
+# Letsencrypt and NGINX
+
+Note: This will not work inside on your local comp. You will have to do this inside your target environment.
+
+First start a data container where the certificate will be stored.
+
+~~~~
+$ docker run -d \
+    -v /etc/letsencrypt \
+    --name letsencrypt_data \
+    blacklabelops/centos bash -c "chown -R 1000:1000 /etc/letsencrypt"
+~~~~
+
+> Letsencrypt stores the certificates inside the folder /etc/letsencrypt.
+
+Then start the letsencrypt container and create the certificate.
+
+~~~~
+$ docker run --rm \
+    -p 80:80 \
+    -p 443:443 \
+    --name letsencrypt \
+    --volumes-from letsencrypt_data \
+    -e "LETSENCRYPT_EMAIL=dummy@example.com" \
+    -e "LETSENCRYPT_DOMAIN1=example.com" \
+    blacklabelops/letsencrypt install
+~~~~
+
+> This container will handshake with letsencrypt.org and an account and the certificate when successful.
+
+Before we can use them you will have to set the appropriate permissions for the nginx user!
+
+~~~~
+$ docker start letsencrypt_data
+~~~~
+
+> The data container will repeat the instruction: chown -R 1000:1000 /etc/letsencrypt
+
+Now you can use the certificate for your reverse proxy!
+
+~~~~
+$ docker run -d \
+    -p 443:44300 \
+    --volumes-from letsencrypt_data \
+    -e "SERVER1REVERSE_PROXY_LOCATION1=/" \
+    -e "SERVER1REVERSE_PROXY_PASS1=http://yourserver" \
+    -e "SERVER1HTTPS_ENABLED=true" \
+    -e "SERVER1HTTP_ENABLED=false" \
+    -e "SERVER1LETSENCRYPT_CERTIFICATES=true" \
+    -e "SERVER1CERTIFICATE_FILE=/etc/letsencrypt/live/example.com/fullchain.pem" \
+    -e "SERVER1CERTIFICATE_KEY=/etc/letsencrypt/live/example.com/privkey.pem" \
+    -e "SERVER1CERTIFICATE_TRUSTED=/etc/letsencrypt/live/example.com/fullchain.pem" \
+    --name nginx \
+    blacklabelops/nginx
+~~~~
+
+> LETSENCRYPT_CERTIFICATES switches on special configuration for letsencrypt certificates.
 
 # References
 
