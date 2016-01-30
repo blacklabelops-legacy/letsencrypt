@@ -35,7 +35,7 @@ RUN mkdir -p $JOBBER_HOME && \
     chown -R $CONTAINER_UID:$CONTAINER_GID $JOBBER_HOME $LETSENCRYPT_HOME && \
     cd $JOBBER_LIB && \
     go get github.com/blacklabelops/jobber && \
-    mv github.com/blacklabelops src/github.com/dshearer && \
+    mv src/github.com/blacklabelops src/github.com/dshearer && \
     make -C src/github.com/dshearer/jobber install-bin DESTDIR=$JOBBER_HOME && \
     cd $LETSENCRYPT_HOME && \
     if  [ "${LETSENCRYPT_VERSION}" = "latest" ]; \
