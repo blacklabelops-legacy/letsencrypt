@@ -118,10 +118,11 @@ case "$1" in
     bash -c "/opt/letsencrypt/letsencrypt/letsencrypt-auto certonly --standalone ${protocoll_command} ${letsencrypt_testcert} ${letsencrypt_debug} ${letsencrypt_account_id} ${letsencrypt_domains}"
     ;;
 
+  *)
+    exec "$@"
+
 esac
 
 if [ -n "${LETSENCRYP_CERTIFICATE_OWNER}" ] || [ -n "${LETSENCRYPT_CERTIFICATE_GROUP}" ]; then
   bash -c "sudo chown -R ${LETSENCRYP_CERTIFICATE_OWNER}:${LETSENCRYPT_CERTIFICATE_GROUP} /etc/letsencrypt"
 fi
-
-exec "$@"
