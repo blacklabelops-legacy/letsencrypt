@@ -21,6 +21,13 @@ RUN yum install -y epel-release && \
     python-tools \
     python-virtualenv \
     python-devel \
+    augeas-libs \
+    dialog \
+    libffi-devel \
+    openssl \
+    openssl-devel \
+    redhat-rpm-config \
+    ca-certificates \
     mercurial && \
     pip install --upgrade pip && \
     yum clean all && rm -rf /var/cache/yum/* && \
@@ -46,7 +53,7 @@ RUN mkdir -p $JOBBER_HOME && \
     if  [ "${LETSENCRYPT_VERSION}" != "latest" ]; \
       then cd letsencrypt && git checkout tags/v${LETSENCRYPT_VERSION} ; \
     fi && \
-    /opt/letsencrypt/letsencrypt/letsencrypt-auto --help
+    /opt/letsencrypt/letsencrypt/letsencrypt-auto --no-self-upgrade --help
 
 WORKDIR /opt/letsencrypt/letsencrypt
 VOLUME ["/etc/letsencrypt"]
