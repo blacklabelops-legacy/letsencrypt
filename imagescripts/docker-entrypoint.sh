@@ -93,7 +93,7 @@ _EOF_
 cat ${configfile}
 
 if [ "$1" = 'jobberd' ]; then
-  sudo /opt/jobber/sbin/jobberd
+  /opt/jobber/sbin/jobberd
 fi
 
 case "$1" in
@@ -124,5 +124,5 @@ case "$1" in
 esac
 
 if [ -n "${LETSENCRYP_CERTIFICATE_OWNER}" ] || [ -n "${LETSENCRYPT_CERTIFICATE_GROUP}" ]; then
-  bash -c "sudo chown -R ${LETSENCRYP_CERTIFICATE_OWNER}:${LETSENCRYPT_CERTIFICATE_GROUP} /etc/letsencrypt"
+  bash -c "chown -R ${LETSENCRYP_CERTIFICATE_OWNER}:${LETSENCRYPT_CERTIFICATE_GROUP} /etc/letsencrypt"
 fi

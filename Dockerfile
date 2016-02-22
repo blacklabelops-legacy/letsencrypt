@@ -17,10 +17,7 @@ RUN yum install -y epel-release && \
     mercurial  && \
     yum clean all && rm -rf /var/cache/yum/* && \
     /usr/sbin/groupadd --gid $CONTAINER_GID $CONTAINER_GROUP && \
-    /usr/sbin/useradd --uid $CONTAINER_UID --gid $CONTAINER_GID --create-home --shell /bin/bash $CONTAINER_GROUP && \
-    /usr/sbin/usermod -aG wheel $CONTAINER_USER && \
-    echo "%wheel ALL = (ALL) NOPASSWD: ALL" >> /etc/sudoers && \
-    echo "Defaults:$CONTAINER_USER !requiretty" >> /etc/sudoers
+    /usr/sbin/useradd --uid $CONTAINER_UID --gid $CONTAINER_GID --create-home --shell /bin/bash $CONTAINER_GROUP
 
 # install Jobber
 ENV JOBBER_HOME=/opt/jobber
@@ -48,7 +45,6 @@ WORKDIR /opt/letsencrypt/letsencrypt
 VOLUME ["/etc/letsencrypt"]
 EXPOSE 443 80
 
-USER $CONTAINER_USER
 COPY imagescripts/docker-entrypoint.sh /opt/jobber/docker-entrypoint.sh
 ENTRYPOINT ["/opt/jobber/docker-entrypoint.sh"]
 CMD ["jobberd"]
