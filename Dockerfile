@@ -1,11 +1,14 @@
 FROM blacklabelops/centos
 MAINTAINER Steffen Bleul <sbl@blacklabelops.com>
 
+ARG LETSENCRYPT_VERSION=latest
+ARG CONTAINER_UID=1000
+ARG CONTAINER_GID=1000
+
 # Property permissions
-ENV CONTAINER_USER=letsencrypt
-ENV CONTAINER_UID=1000
-ENV CONTAINER_GROUP=letsencrypt
-ENV CONTAINER_GID=1000
+ENV CONTAINER_USER=letsencrypt \
+    CONTAINER_GROUP=letsencrypt
+
 
 # install dev tools
 RUN yum install -y epel-release && \
@@ -24,7 +27,6 @@ ENV JOBBER_HOME=/opt/jobber
 ENV JOBBER_LIB=$JOBBER_HOME/lib
 ENV GOPATH=$JOBBER_LIB
 ENV LETSENCRYPT_HOME=/opt/letsencrypt
-ENV LETSENCRYPT_VERSION=latest
 
 RUN mkdir -p $JOBBER_HOME && \
     mkdir -p $JOBBER_LIB && \
