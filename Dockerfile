@@ -17,7 +17,12 @@ RUN yum install -y epel-release && \
     make \
     git \
     sudo \
-    mercurial  && \
+    python-pip \
+    python-tools \
+    python-virtualenv \
+    python-devel \
+    mercurial && \
+    pip install --upgrade pip && \
     yum clean all && rm -rf /var/cache/yum/* && \
     /usr/sbin/groupadd --gid $CONTAINER_GID $CONTAINER_GROUP && \
     /usr/sbin/useradd --uid $CONTAINER_UID --gid $CONTAINER_GID --create-home --shell /bin/bash $CONTAINER_GROUP
@@ -37,9 +42,9 @@ RUN mkdir -p $JOBBER_HOME && \
     mv src/github.com/blacklabelops src/github.com/dshearer && \
     make -C src/github.com/dshearer/jobber install-bin DESTDIR=$JOBBER_HOME && \
     cd $LETSENCRYPT_HOME && \
-    if  [ "${LETSENCRYPT_VERSION}" = "latest" ]; \
-      then git clone https://github.com/letsencrypt/letsencrypt ; \
-      else git clone -b ${LETSENCRYPT_VERSION} https://github.com/letsencrypt/letsencrypt ; \
+    git clone https://github.com/letsencrypt/letsencrypt && \
+    if  [ "${LETSENCRYPT_VERSION}" != "latest" ]; \
+      then cd letsencrypt && git checkout tags/v${LETSENCRYPT_VERSION} ; \
     fi && \
     /opt/letsencrypt/letsencrypt/letsencrypt-auto --help
 
