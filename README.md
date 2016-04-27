@@ -4,17 +4,6 @@ Docker Image wrapping Let's Encrypt Standalone Server.
 
 Perfectly working with this reverse proxy: [blacklabelops/nginx](https://github.com/blacklabelops/nginx)
 
-Work-In-Progress!
-
-This is still Work-In-Progress because:
-
-* I am still testing the whole thing on my servers!
-* The letsencrypt client is not very user friendly. I am still working on examples and documentation.
-* Letsencrypt is under heavy development and big changes may occur in short time.
-* Even when used correctly then the Letsencrypt client can result in errors. The automatic renewal is therefore not reliable.
-
-Questions & Answers on Hipchat: [blacklabelops/hipchat](https://www.hipchat.com/geogBFvEM) (Please only Image-Related! I am no Let's Encrypt Expert)
-
 Features:
 
 * Initial setup of letsencrypt certificates
