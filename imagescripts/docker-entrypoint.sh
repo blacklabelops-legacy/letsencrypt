@@ -83,7 +83,7 @@ fi
 
 cat >> ${configfile} <<_EOF_
 - name: letsencryt_renewal
-  cmd: bash -c "/opt/letsencrypt/letsencrypt/letsencrypt-auto --no-self-upgrade certonly --standalone ${protocoll_command} ${letsencrypt_testcert} ${letsencrypt_debug} --renew-by-default ${letsencrypt_account_id} ${letsencrypt_domains}"
+  cmd: bash -c "/opt/letsencrypt/letsencrypt/letsencrypt-auto --text --no-self-upgrade certonly --standalone ${protocoll_command} ${letsencrypt_testcert} ${letsencrypt_debug} --renew-by-default ${letsencrypt_account_id} ${letsencrypt_domains}"
   time: ${job_time}
   onError: ${job_on_error}
   notifyOnError: false
@@ -93,29 +93,21 @@ _EOF_
 cat ${configfile}
 
 if [ "$1" = 'jobberd' ]; then
-  /opt/jobber/sbin/jobberd
+  exec jobberd
 fi
 
 case "$1" in
 
   install)
-    bash -c "/opt/letsencrypt/letsencrypt/letsencrypt-auto --no-self-upgrade certonly --standalone ${protocoll_command} ${letsencrypt_testcert} ${letsencrypt_debug} --email ${letsencrypt_email} --agree-tos ${letsencrypt_domains}"
-    ;;
-
-  manualinstall)
-    bash -c "/opt/letsencrypt/letsencrypt/letsencrypt-auto --no-self-upgrade certonly --standalone ${protocoll_command} ${letsencrypt_testcert} ${letsencrypt_debug} --email ${letsencrypt_email} ${letsencrypt_domains}"
+    bash -c "/opt/letsencrypt/letsencrypt/letsencrypt-auto --text --non-interactive --no-self-upgrade certonly --standalone ${protocoll_command} ${letsencrypt_testcert} ${letsencrypt_debug} --email ${letsencrypt_email} --agree-tos ${letsencrypt_domains}"
     ;;
 
   newcert)
-    bash -c "/opt/letsencrypt/letsencrypt/letsencrypt-auto --no-self-upgrade certonly --standalone ${protocoll_command} ${letsencrypt_testcert} ${letsencrypt_debug} ${letsencrypt_account_id} ${letsencrypt_domains}"
+    bash -c "/opt/letsencrypt/letsencrypt/letsencrypt-auto --text --non-interactive --no-self-upgrade certonly --standalone ${protocoll_command} ${letsencrypt_testcert} ${letsencrypt_debug} ${letsencrypt_account_id} ${letsencrypt_domains}"
     ;;
 
   renewal)
-    bash -c "/opt/letsencrypt/letsencrypt/letsencrypt-auto --no-self-upgrade certonly --standalone ${protocoll_command} ${letsencrypt_testcert} ${letsencrypt_debug} --renew-by-default ${letsencrypt_account_id} ${letsencrypt_domains}"
-    ;;
-
-  manualrenewal)
-    bash -c "/opt/letsencrypt/letsencrypt/letsencrypt-auto --no-self-upgrade certonly --standalone ${protocoll_command} ${letsencrypt_testcert} ${letsencrypt_debug} ${letsencrypt_account_id} ${letsencrypt_domains}"
+    bash -c "/opt/letsencrypt/letsencrypt/letsencrypt-auto --text --non-interactive --no-self-upgrade certonly --standalone ${protocoll_command} ${letsencrypt_testcert} ${letsencrypt_debug} --renew-by-default ${letsencrypt_account_id} ${letsencrypt_domains}"
     ;;
 
   *)

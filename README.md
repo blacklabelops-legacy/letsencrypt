@@ -170,9 +170,7 @@ $ docker run -d \
 You can invoke all functionality manually. Supported commands are:
 
 * install: Automatic initial install. If you use this multiple times then letsencrypt will create multiple accounts.
-* manualinstall: Manual initial install. If you use this multiple times then letsencrypt will create multiple accounts.
-* newcert: Simply generate a new certificate. (Is actually the same as manualrenewal)
-* manualrenewal: Manually renewal a certificate. (Is actually the same as newcert)
+* newcert: Simply generate a new certificate.
 * renewal: Automatically renew certificate.
 
 Example `install`:
@@ -187,18 +185,6 @@ $ docker run \
     blacklabelops/letsencrypt install
 ~~~~
 
-Example `manualinstall`:
-
-~~~~
-$ docker run -it \
-    -p 80:80 \
-    -p 443:443 \
-    --name letsencrypt \
-    -e "LETSENCRYPT_EMAIL=dummy@example.com" \
-    -e "LETSENCRYPT_DOMAIN1=subdomain1.example.com" \
-    blacklabelops/letsencrypt manualinstall
-~~~~
-
 Example `newcert`:
 
 ~~~~
@@ -208,17 +194,6 @@ $ docker run -it \
     --name letsencrypt \
     -e "LETSENCRYPT_DOMAIN1=subdomain1.example.com" \
     blacklabelops/letsencrypt newcert
-~~~~
-
-Example `manualrenewal`:
-
-~~~~
-$ docker run -it \
-    -p 80:80 \
-    -p 443:443 \
-    --name letsencrypt \
-    -e "LETSENCRYPT_DOMAIN1=subdomain1.example.com" \
-    blacklabelops/letsencrypt manualrenewal
 ~~~~
 
 Example `renewal`:
