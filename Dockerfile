@@ -45,7 +45,7 @@ RUN mkdir -p $JOBBER_HOME && \
     mkdir -p $LETSENCRYPT_HOME && \
     chown -R $CONTAINER_UID:$CONTAINER_GID $JOBBER_HOME $LETSENCRYPT_HOME && \
     cd $JOBBER_LIB && \
-    go get github.com/dshearer/jobber && \
+    go get github.com/dshearer/jobber;true && \
     make -C src/github.com/dshearer/jobber install DESTDIR=$JOBBER_HOME && \
     cp $JOBBER_LIB/bin/* /usr/bin && \
     cd $LETSENCRYPT_HOME && \
