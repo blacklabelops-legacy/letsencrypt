@@ -207,29 +207,33 @@ $ docker run \
     blacklabelops/letsencrypt renewal
 ~~~~
 
-# Letsencrypt and NGINX
+# Letsencrypt And Nginx
 
 Note: This will not work inside on your local comp. You will have to do this inside your target environment.
 
-First start a data container where the certificate will be stored.
+Steps:
+
+1. Create Docker volume for certificates
+1. Create certificates.
+1. Start Nginx with certificates.
+1. Start Container in renewal mode
+1. Start Cron Container for reloading Nginx config
+
+First create a volume for your certificates:
 
 ~~~~
-$ docker run -d \
-    -v /etc/letsencrypt \
-    --name letsencrypt_data \
-    blacklabelops/centos bash -c "chown -R 1000:1000 /etc/letsencrypt"
+$ docker volume create letsencrypt_certificates
 ~~~~
 
-> Letsencrypt stores the certificates inside the folder /etc/letsencrypt.
+> Creates volume on hosts hard disk.
 
-Then start the letsencrypt container and create the certificate.
+Then start the letsencrypt container once and create the certificates.
 
 ~~~~
 $ docker run --rm \
     -p 80:80 \
     -p 443:443 \
-    --name letsencrypt \
-    --volumes-from letsencrypt_data \
+    -v letsencrypt_certificates:/etc/letsencrypt \
     -e "LETSENCRYPT_EMAIL=dummy@example.com" \
     -e "LETSENCRYPT_DOMAIN1=example.com" \
     blacklabelops/letsencrypt install
@@ -237,24 +241,25 @@ $ docker run --rm \
 
 > This container will handshake with letsencrypt.org and an account and the certificate when successful.
 
-Before we can use them you will have to set the appropriate permissions for the nginx user!
+Then create additional volume for acme handshakes:
 
 ~~~~
-$ docker start letsencrypt_data
+$ docker volume create letsencrypt_challenges
 ~~~~
 
-> The data container will repeat the instruction: chown -R 1000:1000 /etc/letsencrypt
-
-Now you can use the certificate for your reverse proxy!
+Now you can use the certificate for your reverse proxy! The additional volume will be used for renewal.
 
 ~~~~
 $ docker run -d \
-    -p 443:44300 \
-    --volumes-from letsencrypt_data \
+    -p 443:443 \
+    -p 80:80 \
+    -v letsencrypt_certificates:/etc/letsencrypt \
+    -v letsencrypt_challenges:/var/www/letsencrypt \
+    -e "NGINX_REDIRECT_PORT80=true" \
     -e "SERVER1REVERSE_PROXY_LOCATION1=/" \
     -e "SERVER1REVERSE_PROXY_PASS1=http://yourserver" \
     -e "SERVER1HTTPS_ENABLED=true" \
-    -e "SERVER1HTTP_ENABLED=false" \
+    -e "SERVER1HTTP_ENABLED=true" \
     -e "SERVER1LETSENCRYPT_CERTIFICATES=true" \
     -e "SERVER1CERTIFICATE_FILE=/etc/letsencrypt/live/example.com/fullchain.pem" \
     -e "SERVER1CERTIFICATE_KEY=/etc/letsencrypt/live/example.com/privkey.pem" \
@@ -263,7 +268,36 @@ $ docker run -d \
     blacklabelops/nginx
 ~~~~
 
-> LETSENCRYPT_CERTIFICATES switches on special configuration for letsencrypt certificates.
+> LETSENCRYPT_CERTIFICATES switches on special configuration for letsencrypt certificates. E.g. in order to accept certificate challenges
+
+Now start letsencrypt in renewal mode, this will renew certificates each month!
+
+~~~~
+$ docker run -d \
+    -v letsencrypt_certificates:/etc/letsencrypt \
+    -v letsencrypt_challenges:/var/www/letsencrypt \
+    -e "LETSENCRYPT_WEBROOT_MODE=true" \
+    -e "LETSENCRYPT_EMAIL=dummy@example.com" \
+    -e "LETSENCRYPT_DOMAIN1=example.com" \
+    --name letsencrypt \
+    blacklabelops/letsencrypt
+~~~~
+
+> This container will handshake with letsencrypt.org each month on the 15th and renewal the certificate when successful.
+
+Finally start a cron container that will reload the Nginx configuration after the certificates have been renewed!
+
+~~~~
+$ docker run -d \
+    -v /var/run/docker.sock:/var/run/docker.sock \
+    -e "JOB_NAME1=ReloadNginx" \
+    -e "JOB_COMMAND1=docker exec nginx nginx -s reload" \
+    -e "JOB_TIME1=0 0 2 15 * *" \
+    -e "JOB_ON_ERROR1=Continue" \
+    blacklabelops/jobber:docker
+~~~~
+
+> Reloads Nginx configuration each month on the 15th over Docker without restarting Nginx! In order to achieve high availability!
 
 # References
 

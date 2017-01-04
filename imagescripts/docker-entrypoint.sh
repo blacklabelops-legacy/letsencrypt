@@ -1,7 +1,7 @@
 #!/bin/bash -x
 set -o errexit
 
-configfile="/home/letsencrypt/.jobber"
+configfile="/root/.jobber"
 
 letsencrypt_testcert=""
 
@@ -27,6 +27,12 @@ do
 
   letsencrypt_domains=$letsencrypt_domains" -d "${!VAR_LETSENCRYPT_DOMAIN}
 done
+
+letsencrypt_challenge_mode="--standalone"
+
+if  [ "${LETSENCRYPT_WEBROOT_MODE}" = "true" ]; then
+  letsencrypt_challenge_mode="--webroot --webroot-path=/var/www/letsencrypt"
+fi
 
 letsencrypt_http_enabled="true"
 letsencrypt_https_enabled="true"
@@ -83,7 +89,7 @@ fi
 
 cat >> ${configfile} <<_EOF_
 - name: letsencryt_renewal
-  cmd: bash -c "/opt/letsencrypt/letsencrypt/letsencrypt-auto --text --no-self-upgrade certonly --standalone ${protocoll_command} ${letsencrypt_testcert} ${letsencrypt_debug} --renew-by-default ${letsencrypt_account_id} ${letsencrypt_domains}"
+  cmd: bash -c "/opt/letsencrypt/letsencrypt/letsencrypt-auto --text --non-interactive --no-self-upgrade certonly ${letsencrypt_challenge_mode} ${protocoll_command} ${letsencrypt_testcert} ${letsencrypt_debug} --renew-by-default ${letsencrypt_account_id} ${letsencrypt_domains}"
   time: ${job_time}
   onError: ${job_on_error}
   notifyOnError: false
@@ -99,22 +105,18 @@ fi
 case "$1" in
 
   install)
-    bash -c "/opt/letsencrypt/letsencrypt/letsencrypt-auto --text --non-interactive --no-self-upgrade certonly --standalone ${protocoll_command} ${letsencrypt_testcert} ${letsencrypt_debug} --email ${letsencrypt_email} --agree-tos ${letsencrypt_domains}"
+    bash -c "/opt/letsencrypt/letsencrypt/letsencrypt-auto --text --non-interactive --no-self-upgrade certonly ${letsencrypt_challenge_mode} ${protocoll_command} ${letsencrypt_testcert} ${letsencrypt_debug} --email ${letsencrypt_email} --agree-tos ${letsencrypt_domains}"
     ;;
 
   newcert)
-    bash -c "/opt/letsencrypt/letsencrypt/letsencrypt-auto --text --non-interactive --no-self-upgrade certonly --standalone ${protocoll_command} ${letsencrypt_testcert} ${letsencrypt_debug} ${letsencrypt_account_id} ${letsencrypt_domains}"
+    bash -c "/opt/letsencrypt/letsencrypt/letsencrypt-auto --text --non-interactive --no-self-upgrade certonly ${letsencrypt_challenge_mode} ${protocoll_command} ${letsencrypt_testcert} ${letsencrypt_debug} ${letsencrypt_account_id} ${letsencrypt_domains}"
     ;;
 
   renewal)
-    bash -c "/opt/letsencrypt/letsencrypt/letsencrypt-auto --text --non-interactive --no-self-upgrade certonly --standalone ${protocoll_command} ${letsencrypt_testcert} ${letsencrypt_debug} --renew-by-default ${letsencrypt_account_id} ${letsencrypt_domains}"
+    bash -c "/opt/letsencrypt/letsencrypt/letsencrypt-auto --text --non-interactive --no-self-upgrade certonly ${letsencrypt_challenge_mode} ${protocoll_command} ${letsencrypt_testcert} ${letsencrypt_debug} --renew-by-default ${letsencrypt_account_id} ${letsencrypt_domains}"
     ;;
 
   *)
     exec "$@"
 
 esac
-
-if [ -n "${LETSENCRYP_CERTIFICATE_OWNER}" ] || [ -n "${LETSENCRYPT_CERTIFICATE_GROUP}" ]; then
-  bash -c "chown -R ${LETSENCRYP_CERTIFICATE_OWNER}:${LETSENCRYPT_CERTIFICATE_GROUP} /etc/letsencrypt"
-fi
