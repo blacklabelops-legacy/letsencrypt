@@ -299,6 +299,10 @@ $ docker run -d \
 
 > Reloads Nginx configuration each month on the 15th over Docker without restarting Nginx! In order to achieve high availability!
 
+# Support
+
+Leave a message and ask questions on Hipchat: [blacklabelops/hipchat](http://support.blacklabelops.com)
+
 # References
 
 * [Let’s Encrypt](https://letsencrypt.org/)
