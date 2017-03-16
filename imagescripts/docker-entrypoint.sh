@@ -105,15 +105,15 @@ fi
 case "$1" in
 
   install)
-    bash -c "/opt/letsencrypt/letsencrypt/letsencrypt-auto --text --non-interactive --no-self-upgrade certonly ${letsencrypt_challenge_mode} ${protocoll_command} ${letsencrypt_testcert} ${letsencrypt_debug} --email ${letsencrypt_email} --agree-tos ${letsencrypt_domains}"
+    bash -c "/opt/letsencrypt/letsencrypt/letsencrypt-auto --text --non-interactive --no-self-upgrade certonly ${letsencrypt_challenge_mode} ${protocoll_command} ${letsencrypt_testcert} ${letsencrypt_debug} --email ${letsencrypt_email} --agree-tos ${letsencrypt_domains} ${@:2}"
     ;;
 
   newcert)
-    bash -c "/opt/letsencrypt/letsencrypt/letsencrypt-auto --text --non-interactive --no-self-upgrade certonly ${letsencrypt_challenge_mode} ${protocoll_command} ${letsencrypt_testcert} ${letsencrypt_debug} ${letsencrypt_account_id} ${letsencrypt_domains}"
+    bash -c "/opt/letsencrypt/letsencrypt/letsencrypt-auto --text --non-interactive --no-self-upgrade certonly ${letsencrypt_challenge_mode} ${protocoll_command} ${letsencrypt_testcert} ${letsencrypt_debug} ${letsencrypt_account_id} ${letsencrypt_domains} ${@:2}"
     ;;
 
   renewal)
-    bash -c "/opt/letsencrypt/letsencrypt/letsencrypt-auto --text --non-interactive --no-self-upgrade certonly ${letsencrypt_challenge_mode} ${protocoll_command} ${letsencrypt_testcert} ${letsencrypt_debug} --renew-by-default ${letsencrypt_account_id} ${letsencrypt_domains}"
+    bash -c "/opt/letsencrypt/letsencrypt/letsencrypt-auto --text --non-interactive --no-self-upgrade certonly ${letsencrypt_challenge_mode} ${protocoll_command} ${letsencrypt_testcert} ${letsencrypt_debug} --renew-by-default ${letsencrypt_account_id} ${letsencrypt_domains} ${@:2}"
     ;;
 
   *)
