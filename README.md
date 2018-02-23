@@ -35,30 +35,19 @@ $ docker run --rm \
     -p 80:80 \
     -p 443:443 \
     --name letsencrypt \
-    -v $(pwd):/etc/letsencrypt \
+    -v letsencrypt_certificates:/etc/letsencrypt \
     -e "LETSENCRYPT_EMAIL=dummy@example.com" \
     -e "LETSENCRYPT_DOMAIN1=www.example.com" \
     blacklabelops/letsencrypt install
 ~~~~
 
-> Will generate dummy certificates inside your local folder! If you want to add new certificates then use 'renew' instead of 'install'. Note: This example works in debug mode!
+> Will generate certificates inside docker volume! If you want to add new certificates then use 'renew' instead of 'install'. Note: This example works in debug mode!
 
 # How It Works
 
 You can create and renew let's encrypt ssl certificates!
 
-First start a data container where the certificate will be stored.
-
-~~~~
-$ docker run -d \
-    -v /etc/letsencrypt \
-    --name letsencrypt_data \
-    blacklabelops/centos bash
-~~~~
-
-> Letsencrypt stores the certificates inside the folder /etc/letsencrypt
-
-Then generate the certificates. This is a one time operation!
+Generate the certificates. This is a one time operation!
 
 Example:
 
@@ -67,13 +56,13 @@ $ docker run --rm \
     -p 80:80 \
     -p 443:443 \
     --name letsencrypt \
-    --volumes-from letsencrypt_data \
+    -v letsencrypt_certificates:/etc/letsencrypt \
     -e "LETSENCRYPT_EMAIL=dummy@example.com" \
     -e "LETSENCRYPT_DOMAIN1=www.example.com" \
     blacklabelops/letsencrypt install
 ~~~~
 
-> Will generate the certificates inside the folder /etc/letsencrypt. If you want to add new certificates then use 'renew' instead of 'install'.
+> Will generate the certificates inside Docker volume. If you want to add new certificates then use 'renew' instead of 'install'.
 
 Now setup the container for monthly renewal!
 
@@ -82,7 +71,7 @@ $ docker run --rm \
     -p 80:80 \
     -p 443:443 \
     --name letsencrypt \
-    --volumes-from letsencrypt_data \
+    -v letsencrypt_certificates:/etc/letsencrypt \
     -e "LETSENCRYPT_DOMAIN1=www.example.com" \
     blacklabelops/letsencrypt
 ~~~~
@@ -109,6 +98,7 @@ $ docker run -d \
     -p 80:80 \
     -p 443:443 \
     --name letsencrypt \
+    -v letsencrypt_certificates:/etc/letsencrypt \
     -e "LETSENCRYPT_EMAIL=dummy@example.com" \
     -e "LETSENCRYPT_DOMAIN1=subdomain1.example.com" \
     -e "LETSENCRYPT_DOMAIN2=www.quitschie.com" \
@@ -131,6 +121,7 @@ Example using HTTP only:
 $ docker run -d \
     -p 80:80 \
     --name letsencrypt \
+    -v letsencrypt_certificates:/etc/letsencrypt \
     -e "LETSENCRYPT_HTTPS_ENABLED=false" \
     -e "LETSENCRYPT_EMAIL=dummy@example.com" \
     -e "LETSENCRYPT_DOMAIN1=subdomain1.example.com" \
@@ -145,6 +136,7 @@ Example using HTTPS only:
 $ docker run -d \
     -p 443:443 \
     --name letsencrypt \
+    -v letsencrypt_certificates:/etc/letsencrypt \
     -e "LETSENCRYPT_HTTP_ENABLED=false" \
     -e "LETSENCRYPT_EMAIL=dummy@example.com" \
     -e "LETSENCRYPT_DOMAIN1=subdomain1.example.com" \
@@ -167,6 +159,7 @@ Example:
 $ docker run -d \
     -p 80:80 \
     --name letsencrypt \
+    -v letsencrypt_certificates:/etc/letsencrypt \
     -e "LETSENCRYPT_HTTPS_ENABLED=false" \
     -e "LETSENCRYPT_ACCOUNT_ID=YOUR_ACCOUNT_ID_HERE" \
     -e "LETSENCRYPT_EMAIL=dummy@example.com" \
@@ -191,6 +184,7 @@ $ docker run \
     -p 80:80 \
     -p 443:443 \
     --name letsencrypt \
+    -v letsencrypt_certificates:/etc/letsencrypt \
     -e "LETSENCRYPT_EMAIL=dummy@example.com" \
     -e "LETSENCRYPT_DOMAIN1=subdomain1.example.com" \
     blacklabelops/letsencrypt install
@@ -203,6 +197,7 @@ $ docker run -it \
     -p 80:80 \
     -p 443:443 \
     --name letsencrypt \
+    -v letsencrypt_certificates:/etc/letsencrypt \
     -e "LETSENCRYPT_DOMAIN1=subdomain1.example.com" \
     blacklabelops/letsencrypt newcert
 ~~~~
@@ -214,6 +209,7 @@ $ docker run \
     -p 80:80 \
     -p 443:443 \
     --name letsencrypt \
+    -v letsencrypt_certificates:/etc/letsencrypt \
     -e "LETSENCRYPT_DOMAIN1=subdomain1.example.com" \
     blacklabelops/letsencrypt renewal
 ~~~~
