@@ -1,5 +1,8 @@
 # Let's Encrypt Docker Image
 
+[![Open Issues](https://img.shields.io/github/issues/blacklabelops/letsencrypt.svg)](https://github.com/blacklabelops/letsencrypt/issues) [![Stars on GitHub](https://img.shields.io/github/stars/blacklabelops/letsencrypt.svg)](https://github.com/blacklabelops/letsencrypt/stargazers)
+[![Docker Stars](https://img.shields.io/docker/stars/blacklabelops/letsencrypt.svg)](https://hub.docker.com/r/blacklabelops/letsencrypt/) [![Docker Pulls](https://img.shields.io/docker/pulls/blacklabelops/letsencrypt.svg)](https://hub.docker.com/r/blacklabelops/letsencrypt/)
+
 Docker Image wrapping Let's Encrypt Standalone Server.
 
 Perfectly working with this reverse proxy: [blacklabelops/nginx](https://github.com/blacklabelops/nginx)
@@ -10,6 +13,14 @@ Features:
 * Automatic renewal of letsencrypt certificates each month
 * Manual creation of new certificates.
 * Manual renewal of certificates.
+
+# Support
+
+Leave a message and ask questions on Hipchat: [blacklabelops/hipchat](http://support.blacklabelops.com)
+
+Maybe no one has ever told you, but munich developers run on beer! If you like my work, share a beer!
+
+[![BeerMe](https://raw.githubusercontent.com/ikkez/Beer-Donation-Button/gh-pages/img/beer_donation_button_single.png)](https://www.paypal.me/donateblacklabelops)
 
 # Requirements
 
@@ -205,6 +216,36 @@ $ docker run \
     --name letsencrypt \
     -e "LETSENCRYPT_DOMAIN1=subdomain1.example.com" \
     blacklabelops/letsencrypt renewal
+~~~~
+
+# Additional Letsencrypt Parameters
+
+You can pass additional letsencrypt parameters to any command!
+
+Example adding Letsencrypt `--expand` parameter:
+
+~~~~
+$ docker run --rm \
+    -p 80:80 \
+    -p 443:443 \
+    --name letsencrypt \
+    -v letsencrypt_data:/etc/letsencrypt \
+    -e "LETSENCRYPT_EMAIL=dummy@example.com" \
+    -e "LETSENCRYPT_DOMAIN1=www.example.com" \
+    blacklabelops/letsencrypt install --expand
+~~~~
+
+Example adding Letsencrypt `--expand` parameter to periodic task:
+
+~~~~
+$ docker run --rm \
+    -p 80:80 \
+    -p 443:443 \
+    --name letsencrypt \
+    -v letsencrypt_data:/etc/letsencrypt \
+    -e "LETSENCRYPT_EMAIL=dummy@example.com" \
+    -e "LETSENCRYPT_DOMAIN1=www.example.com" \
+    blacklabelops/letsencrypt jobberd --expand
 ~~~~
 
 # Letsencrypt And Nginx

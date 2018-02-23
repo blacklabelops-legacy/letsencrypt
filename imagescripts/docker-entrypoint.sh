@@ -87,18 +87,17 @@ if [ -n "${LETSENCRYPT_JOB_TIME}" ]; then
   job_time=${LETSENCRYPT_JOB_TIME}
 fi
 
-cat >> ${configfile} <<_EOF_
+if [ "$1" = 'jobberd' ]; then
+  cat >> ${configfile} <<_EOF_
 - name: letsencryt_renewal
-  cmd: bash -c "/opt/letsencrypt/letsencrypt/letsencrypt-auto --text --non-interactive --no-self-upgrade certonly ${letsencrypt_challenge_mode} ${protocoll_command} ${letsencrypt_testcert} ${letsencrypt_debug} --renew-by-default ${letsencrypt_account_id} ${letsencrypt_domains}"
+  cmd: bash -c "/opt/letsencrypt/letsencrypt/letsencrypt-auto --text --non-interactive --no-self-upgrade certonly ${letsencrypt_challenge_mode} ${protocoll_command} ${letsencrypt_testcert} ${letsencrypt_debug} --renew-by-default ${letsencrypt_account_id} ${letsencrypt_domains} ${@:2}"
   time: ${job_time}
   onError: ${job_on_error}
   notifyOnError: false
   notifyOnFailure: false
 _EOF_
 
-cat ${configfile}
-
-if [ "$1" = 'jobberd' ]; then
+  cat ${configfile}
   exec jobberd
 fi
 
