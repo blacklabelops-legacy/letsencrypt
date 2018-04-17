@@ -3,14 +3,16 @@
 [![Open Issues](https://img.shields.io/github/issues/blacklabelops/letsencrypt.svg)](https://github.com/blacklabelops/letsencrypt/issues) [![Stars on GitHub](https://img.shields.io/github/stars/blacklabelops/letsencrypt.svg)](https://github.com/blacklabelops/letsencrypt/stargazers)
 [![Docker Stars](https://img.shields.io/docker/stars/blacklabelops/letsencrypt.svg)](https://hub.docker.com/r/blacklabelops/letsencrypt/) [![Docker Pulls](https://img.shields.io/docker/pulls/blacklabelops/letsencrypt.svg)](https://hub.docker.com/r/blacklabelops/letsencrypt/)
 
-Docker Image wrapping Let's Encrypt Standalone Server.
+Docker Image wrapping Certbot client to automate the tasks of obtaining Let's Encrypt certificates.
+
+> Until May 2016, Certbot was named simply letsencrypt or letsencrypt-auto, depending on install method. Instructions on the Internet, and some pieces of the software, may still refer to this older name.
 
 Perfectly working with this reverse proxy: [blacklabelops/nginx](https://github.com/blacklabelops/nginx)
 
 Features:
 
-* Initial setup of letsencrypt certificates
-* Automatic renewal of letsencrypt certificates each month
+* Initial setup of Let's Encrypt certificates
+* Automatic renewal of Let's Encrypt certificates each month
 * Manual creation of new certificates.
 * Manual renewal of certificates.
 
@@ -18,17 +20,17 @@ Features:
 
 Leave a message and ask questions on Hipchat: [blacklabelops/hipchat](http://support.blacklabelops.com)
 
-Maybe no one has ever told you, but munich developers run on beer! If you like my work, share a beer!
+Maybe no one has ever told you, but Munich developers run on beer! If you like my work, share a beer!
 
 [![BeerMe](https://raw.githubusercontent.com/ikkez/Beer-Donation-Button/gh-pages/img/beer_donation_button_single.png)](https://www.paypal.me/donateblacklabelops)
 
 # Requirements
 
-Will not work inside your local environment. In order to generate valid certificates you will have to run this container on your internet host. Let's Encrypt does a bidirectional handshake with Letsencrypt.org, this means that the container must be reachable under the respective domain name (e.g. mysubdomain.example.com).
+Will not work inside your local environment. In order to generate valid certificates you will have to run this container on your internet host. Certbot does a bidirectional handshake with letsencrypt.org, this means that the container must be reachable under the respective domain name (e.g. mysubdomain.example.com).
 
 # Make It Short!
 
-In short, you can create and renew let's encrypt ssl certificates!
+In short, you can create and renew Let's Encrypt SSL certificates!
 
 ~~~~
 $ docker run --rm \
@@ -45,7 +47,7 @@ $ docker run --rm \
 
 # How It Works
 
-You can create and renew let's encrypt ssl certificates!
+You can create and renew Let's Encrypt SSL certificates!
 
 Generate the certificates. This is a one time operation!
 
@@ -76,14 +78,14 @@ $ docker run --rm \
     blacklabelops/letsencrypt
 ~~~~
 
-> Will renew the specified certificates on 15. of each month.
+> Will renew the specified certificates on 15th at 1:15AM of each month.
 
 # Let's Encrypt Domains
 
-You can specify multiple domain which will be handled by the image. Each domain must be followed by a number:
+You can specify multiple domains which will be handled by the image. Each domain must be followed by a number:
 
-Note: Multiple domains will result in one certificate with the specified domains! Letsencrypt currently takes the
-certificate specified with LETSENCRYPT_DOMAIN1 as the certificate name for all subcertificates!
+Note: Multiple domains will result in one certificate with the specified domains! Let's Encrypt currently takes the
+certificate specified with LETSENCRYPT_DOMAIN1 as the certificate name for all sub-certificates!
 
 Example:
 
@@ -110,7 +112,7 @@ $ docker run -d \
 
 # Choosing between HTTP and HTTPS
 
-Let's encrypt uses either HTTP port 80 or HTTPS port 443 for autenticating the domains.
+Let's Encrypt uses either HTTP port 80 or HTTPS port 443 for authenticating the domains.
 
 Choose according to the port which is free in your environment and disable the other with
 the environment variables HTTP_ENABLED and HTTPS_ENABLED. Both are true by default.
@@ -147,11 +149,11 @@ $ docker run -d \
 
 # Multiple Accounts
 
-Multiple installations will result in multiple accounts inside /etc/letsencrypt/. Multiple installations need an account id in order to make the container work!
+Multiple installations will result in multiple accounts inside /etc/letsencrypt/. Multiple installations need an account ID in order to make the container work!
 
-The account id's can be found inside the folder: /etc/letsencrypt/accounts/acme-v01.api.letsencrypt.org/directory
+The account ID's can be found inside the folder: /etc/letsencrypt/accounts/acme-v01.api.letsencrypt.org/directory
 
-Now specify the account id with the environment variable LETSENCRYPT_ACCOUNT_ID.
+Now specify the account ID with the environment variable LETSENCRYPT_ACCOUNT_ID.
 
 Example:
 
@@ -173,7 +175,7 @@ $ docker run -d \
 
 You can invoke all functionality manually. Supported commands are:
 
-* install: Automatic initial install. If you use this multiple times then letsencrypt will create multiple accounts.
+* install: Automatic initial install. If you use this multiple times then Certbot will create multiple accounts.
 * newcert: Simply generate a new certificate.
 * renewal: Automatically renew certificate.
 
@@ -214,11 +216,11 @@ $ docker run \
     blacklabelops/letsencrypt renewal
 ~~~~
 
-# Additional Letsencrypt Parameters
+# Additional Certbot Parameters
 
-You can pass additional letsencrypt parameters to any command!
+You can pass additional parameters to any command!
 
-Example adding Letsencrypt `--expand` parameter:
+Example adding Certbot `--expand` parameter:
 
 ~~~~
 $ docker run --rm \
@@ -231,7 +233,7 @@ $ docker run --rm \
     blacklabelops/letsencrypt install --expand
 ~~~~
 
-Example adding Letsencrypt `--expand` parameter to periodic task:
+Example adding Certbot `--expand` parameter to periodic task:
 
 ~~~~
 $ docker run --rm \
@@ -244,7 +246,7 @@ $ docker run --rm \
     blacklabelops/letsencrypt jobberd --expand
 ~~~~
 
-# Letsencrypt And Nginx
+# Letsencrypt and Nginx
 
 Note: This will not work inside on your local comp. You will have to do this inside your target environment.
 
@@ -278,7 +280,7 @@ $ docker run --rm \
 
 > This container will handshake with letsencrypt.org and an account and the certificate when successful.
 
-Then create additional volume for acme handshakes:
+Then create additional volume for ACME handshakes:
 
 ~~~~
 $ docker volume create letsencrypt_challenges
@@ -305,7 +307,7 @@ $ docker run -d \
     blacklabelops/nginx
 ~~~~
 
-> LETSENCRYPT_CERTIFICATES switches on special configuration for letsencrypt certificates. E.g. in order to accept certificate challenges
+> LETSENCRYPT_CERTIFICATES switches on special configuration for Let's Encrypt certificates. E.g. in order to accept certificate challenges
 
 Now start letsencrypt in renewal mode, this will renew certificates each month!
 
@@ -336,6 +338,25 @@ $ docker run -d \
 
 > Reloads Nginx configuration each month on the 15th over Docker without restarting Nginx! In order to achieve high availability!
 
+# Certificate File Permissions and Nginx
+
+Certbot creates the certificates with root permissions per default. If you doesn't run Nginx with the root user, a deploy hook that applies appropriate file permissions need to be used. Otherwise, the Nginx container won't start.
+
+~~~~
+$ docker run -d \
+    -v letsencrypt_certificates:/etc/letsencrypt \
+    -v letsencrypt_challenges:/var/www/letsencrypt \
+    -e "LETSENCRYPT_WEBROOT_MODE=true" \
+    -e "LETSENCRYPT_EMAIL=dummy@example.com" \
+    -e "LETSENCRYPT_DOMAIN1=example.com" \
+		-e "LETSENCRYPT_CERTIFICATES_UID=1000" \
+		-e "LETSENCRYPT_CERTIFICATES_GID=1000" \
+    --name letsencrypt \
+    blacklabelops/letsencrypt
+~~~~
+
+> Changes ownership of all content in /etc/letsencrypt from root.root to 1000.1000 and file permissions of all private keys to user read only.
+
 # Support
 
 Leave a message and ask questions on Hipchat: [blacklabelops/hipchat](http://support.blacklabelops.com)
@@ -343,8 +364,9 @@ Leave a message and ask questions on Hipchat: [blacklabelops/hipchat](http://sup
 # References
 
 * [Let’s Encrypt](https://letsencrypt.org/)
-* [Letsencrypt-Auto](https://github.com/letsencrypt/letsencrypt)
-* [Letsencrypt-Auto Docs](http://letsencrypt.readthedocs.org/en/latest/index.html)
+* [Certbot](https://certbot.eff.org)
+* [Certbot Source Code](https://github.com/certbot/certbot)
+* [Certbot Documentation](http://letsencrypt.readthedocs.org/en/latest/index.html)
 * [Jobber](https://github.com/dshearer/jobber)
 * [Docker Homepage](https://www.docker.com/)
 * [Docker Userguide](https://docs.docker.com/userguide/)
