@@ -1,7 +1,9 @@
 #!/bin/bash -x
 set -o errexit
 
-configfile="/root/.jobber"
+certbot_binary="/opt/certbot/certbot-auto"
+
+jobber_configfile="/root/.jobber"
 
 letsencrypt_testcert=""
 
@@ -67,11 +69,25 @@ if  [ "${LETSENCRYPT_DEBUG}" = "true" ]; then
   letsencrypt_debug="--debug"
 fi
 
-if [ ! -f "${configfile}" ]; then
-  touch ${configfile}
+if [ -n "${LETSENCRYPT_CERTIFICATES_UID}" ] && [ -n "${LETSENCRYPT_CERTIFICATES_GID}" ]; then
+	cat > /etc/letsencrypt/renewal-hooks/deploy/change_permissions.sh <<_EOF_
+#!/bin/sh
+set -e
+chown -R ${LETSENCRYPT_CERTIFICATES_UID}.${LETSENCRYPT_CERTIFICATES_GID} /etc/letsencrypt
+chmod 400 /etc/letsencrypt/archive/*/privkey*.pem
+_EOF_
+	chmod a+x /etc/letsencrypt/renewal-hooks/deploy/change_permissions.sh
+else
+	if [ -f /etc/letsencrypt/renewal-hooks/deploy/change_permissions.sh ]; then
+		rm -f /etc/letsencrypt/renewal-hooks/deploy/change_permissions.sh
+	fi
 fi
 
-cat > ${configfile} <<_EOF_
+if [ ! -f "${jobber_configfile}" ]; then
+  touch ${jobber_configfile}
+fi
+
+cat > ${jobber_configfile} <<_EOF_
 ---
 _EOF_
 
@@ -88,31 +104,31 @@ if [ -n "${LETSENCRYPT_JOB_TIME}" ]; then
 fi
 
 if [ "$1" = 'jobberd' ]; then
-  cat >> ${configfile} <<_EOF_
+  cat >> ${jobber_configfile} <<_EOF_
 - name: letsencryt_renewal
-  cmd: bash -c "/opt/letsencrypt/letsencrypt/letsencrypt-auto --text --non-interactive --no-self-upgrade certonly ${letsencrypt_challenge_mode} ${protocoll_command} ${letsencrypt_testcert} ${letsencrypt_debug} --renew-by-default ${letsencrypt_account_id} ${letsencrypt_domains} ${@:2}"
+  cmd: bash -c "${certbot_binary} --text --non-interactive --no-bootstrap --no-self-upgrade certonly ${letsencrypt_challenge_mode} ${protocoll_command} ${letsencrypt_testcert} ${letsencrypt_debug} --renew-by-default ${letsencrypt_account_id} ${letsencrypt_domains} ${@:2}"
   time: ${job_time}
   onError: ${job_on_error}
   notifyOnError: false
   notifyOnFailure: false
 _EOF_
 
-  cat ${configfile}
+  cat ${jobber_configfile}
   exec jobberd
 fi
 
 case "$1" in
 
   install)
-    bash -c "/opt/letsencrypt/letsencrypt/letsencrypt-auto --text --non-interactive --no-self-upgrade certonly ${letsencrypt_challenge_mode} ${protocoll_command} ${letsencrypt_testcert} ${letsencrypt_debug} --email ${letsencrypt_email} --agree-tos ${letsencrypt_domains} ${@:2}"
+    bash -c "${certbot_binary} --text --non-interactive --no-bootstrap --no-self-upgrade certonly ${letsencrypt_challenge_mode} ${protocoll_command} ${letsencrypt_testcert} ${letsencrypt_debug} --email ${letsencrypt_email} --agree-tos ${letsencrypt_domains} ${@:2}"
     ;;
 
   newcert)
-    bash -c "/opt/letsencrypt/letsencrypt/letsencrypt-auto --text --non-interactive --no-self-upgrade certonly ${letsencrypt_challenge_mode} ${protocoll_command} ${letsencrypt_testcert} ${letsencrypt_debug} ${letsencrypt_account_id} ${letsencrypt_domains} ${@:2}"
+    bash -c "${certbot_binary} --text --non-interactive --no-bootstrap --no-self-upgrade certonly ${letsencrypt_challenge_mode} ${protocoll_command} ${letsencrypt_testcert} ${letsencrypt_debug} ${letsencrypt_account_id} ${letsencrypt_domains} ${@:2}"
     ;;
 
   renewal)
-    bash -c "/opt/letsencrypt/letsencrypt/letsencrypt-auto --text --non-interactive --no-self-upgrade certonly ${letsencrypt_challenge_mode} ${protocoll_command} ${letsencrypt_testcert} ${letsencrypt_debug} --renew-by-default ${letsencrypt_account_id} ${letsencrypt_domains} ${@:2}"
+    bash -c "${certbot_binary} --text --non-interactive --no-bootstrap --no-self-upgrade certonly ${letsencrypt_challenge_mode} ${protocoll_command} ${letsencrypt_testcert} ${letsencrypt_debug} --renew-by-default ${letsencrypt_account_id} ${letsencrypt_domains} ${@:2}"
     ;;
 
   *)
