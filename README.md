@@ -1,8 +1,5 @@
 # Let's Encrypt Docker Image
 
-[![Open Issues](https://img.shields.io/github/issues/blacklabelops/letsencrypt.svg)](https://github.com/blacklabelops/letsencrypt/issues) [![Stars on GitHub](https://img.shields.io/github/stars/blacklabelops/letsencrypt.svg)](https://github.com/blacklabelops/letsencrypt/stargazers)
-[![Docker Stars](https://img.shields.io/docker/stars/blacklabelops/letsencrypt.svg)](https://hub.docker.com/r/blacklabelops/letsencrypt/) [![Docker Pulls](https://img.shields.io/docker/pulls/blacklabelops/letsencrypt.svg)](https://hub.docker.com/r/blacklabelops/letsencrypt/)
-
 Docker Image wrapping Certbot client to automate the tasks of obtaining Let's Encrypt certificates.
 
 > Until May 2016, Certbot was named simply letsencrypt or letsencrypt-auto, depending on install method. Instructions on the Internet, and some pieces of the software, may still refer to this older name.
@@ -15,14 +12,6 @@ Features:
 * Automatic renewal of Let's Encrypt certificates each month
 * Manual creation of new certificates.
 * Manual renewal of certificates.
-
-# Support
-
-Leave a message and ask questions on Hipchat: [blacklabelops/hipchat](http://support.blacklabelops.com)
-
-Maybe no one has ever told you, but Munich developers run on beer! If you like my work, share a beer!
-
-[![BeerMe](https://raw.githubusercontent.com/ikkez/Beer-Donation-Button/gh-pages/img/beer_donation_button_single.png)](https://www.paypal.me/donateblacklabelops)
 
 # Requirements
 
@@ -356,10 +345,6 @@ $ docker run -d \
 ~~~~
 
 > Changes ownership of all content in /etc/letsencrypt from root.root to 1000.1000 and file permissions of all private keys to user read only.
-
-# Support
-
-Leave a message and ask questions on Hipchat: [blacklabelops/hipchat](http://support.blacklabelops.com)
 
 # References
 
